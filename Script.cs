@@ -1,4 +1,4 @@
-﻿// --------
+// --------
 // Settings
 // --------
 // custome data module id
@@ -25,7 +25,7 @@ PDS          pds;
 // --------
 // run interval
 // --------
-const double EXEC_FRAME_RESOLUTION = 15;
+const double EXEC_FRAME_RESOLUTION = 60;
 const double EXEC_INTERVAL_TICK = 1 / EXEC_FRAME_RESOLUTION;
 double currentTime = 0;
 
@@ -128,8 +128,8 @@ private void procedure()
 
     pds.main(PDS.TYPE.DETAIL,        blocks.textPanelsForDetail);
     pds.main(PDS.TYPE.SOLARPANEL,    blocks.textPanelsForSolarPanel);
-    pds.main(PDS.TYPE.BATTERY,       blocks.textPanelsForBattery);
-    pds.main(PDS.TYPE.HYDROGEN_TANK, blocks.textPanelsForHydrogenTanks);
+    pds.main(PDS.TYPE.BATTERY,       blocks.textPanelsForBattery, true);
+    pds.main(PDS.TYPE.HYDROGEN_TANK, blocks.textPanelsForHydrogenTanks, true);
 }
 
 private class Blocks
@@ -364,7 +364,7 @@ class PDS
     int height =  89; //263;
 
     double chartSizeOut = 0.20d;
-    double chartSizeIn  = 0.075d;
+    double chartSizeIn  = 0.07d;
     double chartSize_bar_out;
     double chartSize_bar_in;
 
@@ -380,7 +380,7 @@ class PDS
         this.program = program;
         
         this.chartSize_bar_out = this.chartSizeOut - 0.0107d;
-        this.chartSize_bar_in  = this.chartSizeIn  + 0.0070d;
+        this.chartSize_bar_in  = this.chartSizeIn  + 0.01d;
 
         this.sb = new StringBuilder("", this.width * this.height);
     }
@@ -439,22 +439,22 @@ class PDS
 
         if (type == TYPE.DETAIL && tp.Count > 0) {
             this.createText_Detail();
-            tp[0].WritePublicText(this.sb.ToString(), false);
+            tp[0].WriteText(this.sb.ToString(), false);
         }
 
         if (type == TYPE.BATTERY && tp.Count > 0) {
             this.createChart_Battery();
-            tp[0].WritePublicText(this.sb.ToString(), false);
+            tp[0].WriteText(this.sb.ToString(), false);
         }
 
         if (type == TYPE.SOLARPANEL && tp.Count > 0) {
             this.createChart_SolarPanel();
-            tp[0].WritePublicText(this.sb.ToString(), false);
+            tp[0].WriteText(this.sb.ToString(), false);
         }
 
         if (type == TYPE.HYDROGEN_TANK && tp.Count > 0) {
             this.createChart_HydrogenTank();
-            tp[0].WritePublicText(this.sb.ToString(), false);
+            tp[0].WriteText(this.sb.ToString(), false);
         }
     }
 
@@ -465,7 +465,7 @@ class PDS
         this.sb.Append(" Power Diagnostic System\r\n");
         this.sb.Append("\r\n");    
 
-        this.sb.Append(" █ Solar Panel Status\r\n");
+        this.sb.Append(" ? Solar Panel Status\r\n");
 
         if ( this.detailSolarPanel.qty > 0 ) 
         {         
@@ -486,7 +486,7 @@ class PDS
 
         this.sb.Append("\r\n");    
 
-        this.sb.Append(" █ Battery Status\r\n");
+        this.sb.Append(" ? Battery Status\r\n");
 
         if ( this.detailBattery.qty > 0 ) 
         {               
@@ -513,15 +513,15 @@ class PDS
         
         this.sb.Append("\r\n");    
 
-        this.sb.Append(" █ Hydrogen Fuel Status\r\n");
+        this.sb.Append(" ? Hydrogen Fuel Status\r\n");
 
         if ( this.detailHydrogenTanks.qty > 0 ) 
         {               
             this.sb.Append("     Stored Fuel     : ");
-            this.sb.Append((this.detailHydrogenTanks.totalStored).ToString("0"));
+            this.sb.Append((this.detailHydrogenTanks.totalStored).ToString("0.00"));
             this.sb.Append("L\r\n");
             this.sb.Append("     Max Stored Fuel : ");
-            this.sb.Append((this.detailHydrogenTanks.totalMaxStored).ToString("0"));
+            this.sb.Append((this.detailHydrogenTanks.totalMaxStored).ToString("0.00"));
             this.sb.Append("L\r\n");
             this.sb.Append("     Stored          : ");
             this.sb.Append((this.detailHydrogenTanks.totalStored/detailHydrogenTanks.totalMaxStored*100).ToString("0.00"));
@@ -539,11 +539,11 @@ class PDS
 
         this.sb.Append("\r\n");        
 
-        this.sb.Append("  ███  ███  █      █   ████  ████    █   █   █ █████ █   \r\n");
-        this.sb.Append(" █    █   █ █     █ █  █   █ █   █  █ █  ██  █ █     █   \r\n");
-        this.sb.Append("  ██  █   █ █    █████ █████ ████  █████ █ █ █ █████ █   \r\n");
-        this.sb.Append("    █ █   █ █    █   █ █  █  █     █   █ █  ██ █     █   \r\n");
-        this.sb.Append(" ███   ███  ████ █   █ █   █ █     █   █ █   █ █████ ████\r\n");
+        this.sb.Append("  ???  ???  ?      ?   ????  ????    ?   ?   ? ????? ?   \r\n");
+        this.sb.Append(" ?    ?   ? ?     ? ?  ?   ? ?   ?  ? ?  ??  ? ?     ?   \r\n");
+        this.sb.Append("  ??  ?   ? ?    ????? ????? ????  ????? ? ? ? ????? ?   \r\n");
+        this.sb.Append("    ? ?   ? ?    ?   ? ?  ?  ?     ?   ? ?  ?? ?     ?   \r\n");
+        this.sb.Append(" ???   ???  ???? ?   ? ?   ? ?     ?   ? ?   ? ????? ????\r\n");
 
         if (this.detailSolarPanel.totalMaxOutput > 0.0d)
         { 
@@ -563,11 +563,11 @@ class PDS
 
         this.sb.Append("\r\n");      
 
-        this.sb.Append(" ███    █   █████ █████ █████ ████  █   █\r\n");
-        this.sb.Append(" █  █  █ █    █     █   █     █   █  █ █\r\n");
-        this.sb.Append(" ███  █████   █     █   █████ █████   █ \r\n");
-        this.sb.Append(" █  █ █   █   █     █   █     █  █    █\r\n");
-        this.sb.Append(" ███  █   █   █     █   █████ █   █   █r\n");
+        this.sb.Append(" ???    ?   ????? ????? ????? ????  ?   ?\r\n");
+        this.sb.Append(" ?  ?  ? ?    ?     ?   ?     ?   ?  ? ?\r\n");
+        this.sb.Append(" ???  ?????   ?     ?   ????? ?????   ? \r\n");
+        this.sb.Append(" ?  ? ?   ?   ?     ?   ?     ?  ?    ?\r\n");
+        this.sb.Append(" ???  ?   ?   ?     ?   ????? ?   ?   ?r\n");
 
         if (this.detailBattery.totalMaxStored > 0.0d)
         { 
@@ -587,11 +587,11 @@ class PDS
 
         this.sb.Append("\r\n");      
 
-        this.sb.Append(" █  █ █   █ ████  ████   ███   ███  █████ █    █\r\n");
-        this.sb.Append(" █  █  █ █  █   █ █   █ █   █ █     █     ██   █\r\n");
-        this.sb.Append(" ████   █   █   █ ████  █   █ █ ███ █████ █ █  █\r\n");
-        this.sb.Append(" █  █   █   █   █ █  █  █   █ █   █ █     █  █ █\r\n");
-        this.sb.Append(" █  █   █   ████  █   █  ███   ███  █████ █   ██\r\n");
+        this.sb.Append(" ?  ? ?   ? ????  ????   ???   ???  ????? ?    ?\r\n");
+        this.sb.Append(" ?  ?  ? ?  ?   ? ?   ? ?   ? ?     ?     ??   ?\r\n");
+        this.sb.Append(" ????   ?   ?   ? ????  ?   ? ? ??? ????? ? ?  ?\r\n");
+        this.sb.Append(" ?  ?   ?   ?   ? ?  ?  ?   ? ?   ? ?     ?  ? ?\r\n");
+        this.sb.Append(" ?  ?   ?   ????  ?   ?  ???   ???  ????? ?   ??\r\n");
 
         if (this.detailHydrogenTanks.totalMaxStored > 0.0d)
         { 
@@ -607,7 +607,7 @@ class PDS
 
     private void createChart(double rate)
     {
-        string dot = "█";
+        string dot = "?";
         //string bg  = " ";
         
         int center_v = height / 2;       
@@ -630,7 +630,7 @@ class PDS
         
         if (this.invert) {
             dot = " ";
-            //bg  = "█";
+            //bg  = "?";
         }
 
         rate_rad = 2.0d * Math.PI * rate;
@@ -644,14 +644,14 @@ class PDS
             {   
                 x = (h - center_h) * height / width;   
 
-                square = square_y + x * x;
+                square = square_y + x * x;   
 
                 if ( true  
                      && square < square_c * chartSizeOut   
                      && square > square_c * chartSize_bar_out 
                 )     
                 {  
-                    this.sb.Append("█");
+                    this.sb.Append("?");
                     continue;     
                 }     
 
@@ -663,14 +663,14 @@ class PDS
                 {
                     this.sb.Append(dot);
                     continue;      
-                }
+                }     
 
                 if ( true
                      && square < square_c * chartSize_bar_in   
                      && square > square_c * chartSizeIn   
                 )       
                 {        
-                    this.sb.Append("█");
+                    this.sb.Append("?");
                     continue;       
                 }  
 
@@ -704,19 +704,19 @@ class PDS
             rate3 = 0; 
 
             degit = new string[] {  
-                "     ██ " + fontNumber[rate2,  0] + fontNumber[rate3,  0] + "           ",
-                "     ██ " + fontNumber[rate2,  1] + fontNumber[rate3,  1] + "           ",
-                "     ██ " + fontNumber[rate2,  2] + fontNumber[rate3,  2] + "           ",
-                "     ██ " + fontNumber[rate2,  3] + fontNumber[rate3,  3] + "           ",
-                "     ██ " + fontNumber[rate2,  4] + fontNumber[rate3,  4] + "           ",
-                "     ██ " + fontNumber[rate2,  5] + fontNumber[rate3,  5] + "           ",
-                "        " + fontNumber[rate2,  6] + fontNumber[rate3,  6] + " ███   █   ",
-                "     ██ " + fontNumber[rate2,  7] + fontNumber[rate3,  7] + " █ █  █    ",
-                "     ██ " + fontNumber[rate2,  8] + fontNumber[rate3,  8] + " █ █ ██    ",
-                "     ██ " + fontNumber[rate2,  9] + fontNumber[rate3,  9] + " ███ █ ███ ",
-                "     ██ " + fontNumber[rate2, 10] + fontNumber[rate3, 10] + "    ██ █ █ ",
-                "     ██ " + fontNumber[rate2, 11] + fontNumber[rate3, 11] + "    █  █ █ ",
-                "     ██ " + fontNumber[rate2, 12] + fontNumber[rate3, 12] + "   █   ███ "
+                "     ?? " + fontNumber[rate2,  0] + fontNumber[rate3,  0] + "           ",
+                "     ?? " + fontNumber[rate2,  1] + fontNumber[rate3,  1] + "           ",
+                "     ?? " + fontNumber[rate2,  2] + fontNumber[rate3,  2] + "           ",
+                "     ?? " + fontNumber[rate2,  3] + fontNumber[rate3,  3] + "           ",
+                "     ?? " + fontNumber[rate2,  4] + fontNumber[rate3,  4] + "           ",
+                "     ?? " + fontNumber[rate2,  5] + fontNumber[rate3,  5] + "           ",
+                "        " + fontNumber[rate2,  6] + fontNumber[rate3,  6] + " ???   ?   ",
+                "     ?? " + fontNumber[rate2,  7] + fontNumber[rate3,  7] + " ? ?  ?    ",
+                "     ?? " + fontNumber[rate2,  8] + fontNumber[rate3,  8] + " ? ? ??    ",
+                "     ?? " + fontNumber[rate2,  9] + fontNumber[rate3,  9] + " ??? ? ??? ",
+                "     ?? " + fontNumber[rate2, 10] + fontNumber[rate3, 10] + "    ?? ? ? ",
+                "     ?? " + fontNumber[rate2, 11] + fontNumber[rate3, 11] + "    ?  ? ? ",
+                "     ?? " + fontNumber[rate2, 12] + fontNumber[rate3, 12] + "   ?   ??? "
             }; 
         } 
         else 
@@ -731,13 +731,13 @@ class PDS
                 "        " + fontNumber[rate2,  3] + fontNumber[rate3,  3] + "           ",
                 "        " + fontNumber[rate2,  4] + fontNumber[rate3,  4] + "           ",
                 "        " + fontNumber[rate2,  5] + fontNumber[rate3,  5] + "           ",
-                "        " + fontNumber[rate2,  6] + fontNumber[rate3,  6] + " ███   █   ",
-                "        " + fontNumber[rate2,  7] + fontNumber[rate3,  7] + " █ █  █    ",
-                "        " + fontNumber[rate2,  8] + fontNumber[rate3,  8] + " █ █ ██    ",
-                "        " + fontNumber[rate2,  9] + fontNumber[rate3,  9] + " ███ █ ███ ",
-                "        " + fontNumber[rate2, 10] + fontNumber[rate3, 10] + "    ██ █ █ ",
-                "        " + fontNumber[rate2, 11] + fontNumber[rate3, 11] + "    █  █ █ ",
-                "        " + fontNumber[rate2, 12] + fontNumber[rate3, 12] + "   █   ███ "
+                "        " + fontNumber[rate2,  6] + fontNumber[rate3,  6] + " ???   ?   ",
+                "        " + fontNumber[rate2,  7] + fontNumber[rate3,  7] + " ? ?  ?    ",
+                "        " + fontNumber[rate2,  8] + fontNumber[rate3,  8] + " ? ? ??    ",
+                "        " + fontNumber[rate2,  9] + fontNumber[rate3,  9] + " ??? ? ??? ",
+                "        " + fontNumber[rate2, 10] + fontNumber[rate3, 10] + "    ?? ? ? ",
+                "        " + fontNumber[rate2, 11] + fontNumber[rate3, 11] + "    ?  ? ? ",
+                "        " + fontNumber[rate2, 12] + fontNumber[rate3, 12] + "   ?   ??? "
             }; 
         } 
 
@@ -761,154 +761,154 @@ class PDS
  
     private string[,] fontNumber = new string[,] { 
         { 
-           " ███████  ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ",  
+           " ???????  ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ",  
            "          ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ",  
-           " ███████  ", 
-        }, 
-        { 
-           "          ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ",  
-           "          ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ",  
-           "          ", 
-        }, 
-        { 
-           " ███████  ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ",  
-           " ███████  ", 
-           "██        ", 
-           "██        ", 
-           "██        ", 
-           "██        ", 
-           "██        ",  
-           " ███████  ", 
-        }, 
-        { 
-           " ███████  ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ",  
-           " ███████  ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ",  
-           " ███████  ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ",  
+           " ???????  ", 
         }, 
         { 
            "          ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ",  
-           " ███████  ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ",  
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ",  
+           "          ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ",  
            "          ", 
         }, 
         { 
-           " ███████  ", 
-           "██        ", 
-           "██        ", 
-           "██        ", 
-           "██        ", 
-           "██        ",  
-           " ███████  ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ",  
-           " ███████  ", 
+           " ???????  ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ",  
+           " ???????  ", 
+           "??        ", 
+           "??        ", 
+           "??        ", 
+           "??        ", 
+           "??        ",  
+           " ???????  ", 
         }, 
         { 
-           " ███████  ", 
-           "██        ", 
-           "██        ", 
-           "██        ", 
-           "██        ", 
-           "██        ",  
-           " ███████  ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ",  
-           " ███████  ", 
+           " ???????  ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ",  
+           " ???????  ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ",  
+           " ???????  ", 
         }, 
         { 
-           " ███████  ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ",  
            "          ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ",  
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ",  
+           " ???????  ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ",  
            "          ", 
         }, 
         { 
-           " ███████  ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ",  
-           " ███████  ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ",  
-           " ███████  ", 
+           " ???????  ", 
+           "??        ", 
+           "??        ", 
+           "??        ", 
+           "??        ", 
+           "??        ",  
+           " ???????  ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ",  
+           " ???????  ", 
         }, 
         { 
-           " ███████  ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ", 
-           "██     ██ ",  
-           " ███████  ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ", 
-           "       ██ ",  
-           " ███████  ", 
+           " ???????  ", 
+           "??        ", 
+           "??        ", 
+           "??        ", 
+           "??        ", 
+           "??        ",  
+           " ???????  ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ",  
+           " ???????  ", 
+        }, 
+        { 
+           " ???????  ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ",  
+           "          ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ",  
+           "          ", 
+        }, 
+        { 
+           " ???????  ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ",  
+           " ???????  ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ",  
+           " ???????  ", 
+        }, 
+        { 
+           " ???????  ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ", 
+           "??     ?? ",  
+           " ???????  ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ", 
+           "       ?? ",  
+           " ???????  ", 
         } 
     };
 }
