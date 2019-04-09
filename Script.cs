@@ -25,7 +25,7 @@ PDS          pds;
 // --------
 // run interval
 // --------
-const double EXEC_FRAME_RESOLUTION = 60;
+const double EXEC_FRAME_RESOLUTION = 15;
 const double EXEC_INTERVAL_TICK = 1 / EXEC_FRAME_RESOLUTION;
 double currentTime = 0;
 
@@ -595,7 +595,7 @@ class PDS
 
         if (this.detailHydrogenTanks.totalMaxStored > 0.0d)
         { 
-           rate = this.detailHydrogenTanks.totalStored/this.detailHydrogenTanks.totalMaxStored;
+           rate = this.detailHydrogenTanks.totalStored / this.detailHydrogenTanks.totalMaxStored;
         } 
         else 
         { 
