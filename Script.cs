@@ -395,7 +395,7 @@ class PDS
         {               
             //string name = solarPanelsList[i].CustomName;
             this.detailSolarPanel.totalOutput    += solarPanelsList[i].MaxOutput;            
-            this.detailSolarPanel.totalMaxOutput += 0.12f; //solarPanelsList[i].MaxOutput;             
+            this.detailSolarPanel.totalMaxOutput += 0.16d; //solarPanelsList[i].MaxOutput;             
         }
         this.detailSolarPanel.fEfficiency = this.detailSolarPanel.totalOutput/detailSolarPanel.totalMaxOutput*100;
     }
